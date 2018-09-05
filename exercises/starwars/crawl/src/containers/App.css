@@ -1,0 +1,34 @@
+.card {
+  background: linear-gradient(to bottom, #1A0F0E, #422727);
+  border-top: 6px solid #1A0F0E;
+  position: relative;
+  min-height: 400px;
+  overflow: hidden;
+}
+
+.card:hover {
+  border-top: 6px solid gold;
+  transition: all .2s ease-in-out;
+}
+
+.movie-release-director {
+  color: #9C8E8C;
+}
+
+.opening-crawl {
+  color: #EBDBDB;
+}
+
+.card-footer,
+.card-footer>p>a {
+  color: #B5A19E;
+}
+
+.epinum {
+  font-size: 1600%;
+  line-height: 0px;
+  opacity: .08;
+  position: absolute;
+  bottom: 100px;
+  right: 20px;
+}
