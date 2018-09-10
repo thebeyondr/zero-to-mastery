@@ -12,11 +12,12 @@ class App extends Component {
       searchField: ''
     }
   }
-  onSearchChange = event => {
+  onSearchChange (event) {
     this.setState({ searchField: event.target.value })
   }
   componentDidMount () {
-    fetch('https://jsonplaceholder.typicode.com/users')
+    window
+      .fetch('https://jsonplaceholder.typicode.com/users')
       .then(data => data.json())
       .then(robots => {
         this.setState({ robots })
