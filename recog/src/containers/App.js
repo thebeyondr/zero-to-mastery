@@ -1,4 +1,3 @@
-import Clarifai from 'clarifai'
 import React, {Component} from 'react'
 import Particles from 'react-particles-js'
 import ImageLinkForm from '../components/ImageLinkForm/ImageLinkForm'
@@ -11,10 +10,7 @@ import './App.css'
 import Signin from '../components/Signin/Signin'
 import Register from '../components/Register/Register'
 
-// instantiate a new Clarifai app passing in your api key.
-const app = new Clarifai.App({
-  apiKey: 'd72c09907eb344318b7393cfa1d0a827'
-})
+const fetch = window.fetch
 
 const particlesOptions = {
   particles: {
@@ -27,24 +23,26 @@ const particlesOptions = {
     }
   }
 }
+
+const initialState = {
+  input: '',
+  imageURL: '',
+  box: {},
+  route: 'signin',
+  isSignedin: false,
+  user: {
+    id: '',
+    name: '',
+    email: '',
+    password: '',
+    entries: 0,
+    joined: ''
+  }
+}
 class App extends Component {
   constructor () {
     super()
-    this.state = {
-      input: '',
-      imageURL: '',
-      box: {},
-      route: 'signin',
-      isSignedin: false,
-      user: {
-        id: '',
-        name: '',
-        email: '',
-        password: '',
-        entries: 0,
-        joined: ''
-      }
-    }
+    this.state = initialState
   }
 
   loadUser = data => {
@@ -80,7 +78,7 @@ class App extends Component {
 
   onRouteChange = route => {
     if (route === 'signin') {
-      this.setState({isSignedIn: false})
+      this.setState(initialState)
     } else if (route === 'home') {
       this.setState({isSignedIn: true})
     }
@@ -93,26 +91,42 @@ class App extends Component {
 
   onPictureSubmit = () => {
     this.setState({imageURL: this.state.input})
-    app.models
-      .predict(Clarifai.FACE_DETECT_MODEL, this.state.input)
+    fetch('http://localhost:3000/imageurl', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        input: this.state.input
+      })
+    })
+      .then(response => response.json())
       .then(response => {
         if (response) {
-          window
-            .fetch('http://localhost:3000/image', {
-              method: 'put',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify({
-                id: this.state.user.id
-              })
+          fetch('http://localhost:3000/image', {
+            method: 'put',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              id: this.state.user.id
             })
+          })
             .then(response => response.json())
             .then(count => {
               this.setState(Object.assign(this.state.user, {entries: count}))
             })
+            .catch(err => {
+              if (err) {
+                throw new Error()
+              }
+            })
         }
         this.displayFaceBox(this.calculateFaceLocation(response))
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        if (err) {
+          console.log(
+            'Sorry! We could not update your entries. Try another image?'
+          )
+        }
+      })
   }
 
   render () {
