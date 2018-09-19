@@ -25,7 +25,7 @@ app.use(bodyParser.json())
 app.use(cors())
 
 app.get('/', (req, res) => {
-  // res.status(200).json(database.users)
+  res.status(200).send('Welcome')
 })
 
 app.post('/signin', (req, res) => {
@@ -46,6 +46,6 @@ app.put('/image', (req, res) => {
 
 app.post('/imageurl', (req, res) => image.handleAPICall(req, res))
 
-app.listen(3000, () => {
-  console.log('Awaiting the apocalypse on port 3000...')
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Awaiting the apocalypse on port ${process.env.PORT}...`)
 })
